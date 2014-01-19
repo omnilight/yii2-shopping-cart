@@ -1,0 +1,20 @@
+{
+    "name": "omnilight/yii2-shopping-cart",
+    "description": "Yii2 extension that adds shopping cart functions",
+    "keywords": ["yii", "shopping cart"],
+    "minimum-stability": "dev",
+    "authors": [
+        {
+            "name": "Pavel Agalecky",
+            "email": "pavel.agalecky@gmail.com"
+        }
+    ],
+    "type": "yii2-extension",
+    "require": {
+        "php": ">=5.4.0",
+        "yiisoft/yii2": "dev-master",
+    },
+    "autoload": {
+        "psr-4": { "yz\\shoppingcart\\": "" }
+    }
+}
