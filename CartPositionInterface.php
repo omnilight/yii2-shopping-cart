@@ -11,6 +11,10 @@ namespace yz\shoppingcart;
 
 /**
  * Interface CartItemInterface
+ * @property int $price
+ * @property int $cost
+ * @property string $id
+ * @property int $quantity
  * @package yz\shoppingcart
  */
 interface CartPositionInterface

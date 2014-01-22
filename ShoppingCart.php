@@ -11,6 +11,7 @@ use yii\base\Event;
  * @property CartPositionInterface[] $positions
  * @property int $count Total count of positions in the cart
  * @property int $cost Total cost of positions in the cart
+ * @property bool $isEmpty Returns true if cart is empty
  * @package \yz\shoppingcart
  */
 class ShoppingCart extends Component
@@ -105,6 +106,14 @@ class ShoppingCart extends Component
 	public function getPositions()
 	{
 		return $this->_positions;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getIsEmpty()
+	{
+		return count($this->_positions) == 0;
 	}
 
 	/**
