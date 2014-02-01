@@ -24,7 +24,7 @@ trait CartPositionTrait
 
 	public function setQuantity($quantity)
 	{
-		$this->quantity = $quantity;
+		$this->_quantity = $quantity;
 	}
 
 	/**
