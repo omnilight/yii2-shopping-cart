@@ -12,6 +12,8 @@ use yii\base\Event;
  * @property int $count Total count of positions in the cart
  * @property int $cost Total cost of positions in the cart
  * @property bool $isEmpty Returns true if cart is empty
+ * @property string $hash Returns hash (md5) of the current cart, that is uniq to the current combination
+ * of positions, quantities and costs
  * @package \yz\shoppingcart
  */
 class ShoppingCart extends Component
@@ -136,6 +138,20 @@ class ShoppingCart extends Component
 		foreach ($this->_positions as $position)
 			$cost += $position->getCost();
 		return $cost;
+	}
+
+	/**
+	 * Returns hash (md5) of the current cart, that is uniq to the current combination
+	 * of positions, quantities and costs
+	 * @return string
+	 */
+	public function getHash()
+	{
+		$data = [];
+		foreach ($this->positions as $position) {
+			$data[] = [$position->getId(), $position->getQuantity(), $position->getPrice()];
+		}
+		return md5(serialize($data));
 	}
 
 	protected function saveToSession()

@@ -10,7 +10,8 @@ namespace yz\shoppingcart;
 
 /**
  * Trait CartPositionTrait
- * @property float $quantity
+ * @property int $quantity Returns quantity of cart position
+ * @property int $cost Returns cost of cart position. Default value is 'price * quantity'
  * @package yz\shoppingcart
  */
 trait CartPositionTrait
