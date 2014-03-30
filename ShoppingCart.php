@@ -110,6 +110,14 @@ class ShoppingCart extends Component
 		return $this->_positions;
 	}
 
+    /**
+     * @param CartPositionInterface[] $positions
+     */
+    public function setPositions($positions)
+    {
+        $this->_positions = $positions;
+    }
+
 	/**
 	 * @return bool
 	 */
