@@ -116,6 +116,7 @@ class ShoppingCart extends Component
     public function setPositions($positions)
     {
         $this->_positions = $positions;
+        $this->saveToSession();
     }
 
 	/**
