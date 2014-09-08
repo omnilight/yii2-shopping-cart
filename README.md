@@ -56,7 +56,7 @@ public function actionAddToCart($id)
     }
     throw new NotFoundHttpException();
 }
-```php
+```
 
 Also you can use cart as global application component:
 
