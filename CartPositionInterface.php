@@ -19,28 +19,28 @@ namespace yz\shoppingcart;
  */
 interface CartPositionInterface
 {
-	/**
-	 * @return integer
-	 */
-	public function getPrice();
+    /**
+     * @return integer
+     */
+    public function getPrice();
 
-	/**
-	 * @return integer
-	 */
-	public function getCost();
+    /**
+     * @return integer
+     */
+    public function getCost();
 
-	/**
-	 * @return string
-	 */
-	public function getId();
+    /**
+     * @return string
+     */
+    public function getId();
 
-	/**
-	 * @param int $quantity
-	 */
-	public function setQuantity($quantity);
+    /**
+     * @param int $quantity
+     */
+    public function setQuantity($quantity);
 
-	/**
-	 * @return int
-	 */
-	public function getQuantity();
+    /**
+     * @return int
+     */
+    public function getQuantity();
 } 

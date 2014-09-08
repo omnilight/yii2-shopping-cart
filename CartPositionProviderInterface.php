@@ -16,8 +16,8 @@ namespace yz\shoppingcart;
  */
 interface CartPositionProviderInterface
 {
-	/**
-	 * @return CartPositionInterface
-	 */
-	public function getCartPosition();
+    /**
+     * @return CartPositionInterface
+     */
+    public function getCartPosition();
 } 

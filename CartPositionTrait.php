@@ -16,25 +16,25 @@ namespace yz\shoppingcart;
  */
 trait CartPositionTrait
 {
-	protected $_quantity;
+    protected $_quantity;
 
-	public function getQuantity()
-	{
-		return $this->_quantity;
-	}
+    public function getQuantity()
+    {
+        return $this->_quantity;
+    }
 
-	public function setQuantity($quantity)
-	{
-		$this->_quantity = $quantity;
-	}
+    public function setQuantity($quantity)
+    {
+        $this->_quantity = $quantity;
+    }
 
-	/**
-	 * Default implementation for getCost function. Cost is calculated as price * quantity
-	 * @return int
-	 */
-	public function getCost()
-	{
+    /**
+     * Default implementation for getCost function. Cost is calculated as price * quantity
+     * @return int
+     */
+    public function getCost()
+    {
         /** @var CartPositionInterface $this */
-		return $this->getQuantity() * $this->getPrice();
-	}
+        return $this->getQuantity() * $this->getPrice();
+    }
 } 
