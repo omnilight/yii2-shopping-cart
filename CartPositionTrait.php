@@ -34,6 +34,7 @@ trait CartPositionTrait
 	 */
 	public function getCost()
 	{
+        /** @var CartPositionInterface $this */
 		return $this->getQuantity() * $this->getPrice();
 	}
 } 

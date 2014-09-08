@@ -18,16 +18,20 @@ use yii\base\Event;
  */
 class ShoppingCart extends Component
 {
+    /** Triggered on position put */
 	const EVENT_POSITION_PUT = 'putPosition';
+    /** Triggered on position update */
 	const EVENT_POSITION_UPDATE = 'updatePosition';
+    /** Triggered on after position remove */
 	const EVENT_BEFORE_POSITION_REMOVE = 'removePosition';
+    /** Triggered on any cart change: add, update, delete position */
+    const EVENT_CART_CHANGE = 'cartChange';
 
 	/**
 	 * Shopping cart ID to support multiple carts
 	 * @var string
 	 */
 	public $cartId = __CLASS__;
-
 	/**
 	 * @var CartPositionInterface[]
 	 */
@@ -54,6 +58,9 @@ class ShoppingCart extends Component
 		$this->trigger(self::EVENT_POSITION_PUT, new Event([
 			'data' => $this->_positions[$position->getId()],
 		]));
+        $this->trigger(self::EVENT_CART_CHANGE, new Event([
+            'data' => ['action' => 'put', 'position' => $this->_positions[$position->getId()]],
+        ]));
 		$this->saveToSession();
 	}
 
@@ -63,6 +70,11 @@ class ShoppingCart extends Component
 	 */
 	public function update($position, $quantity)
 	{
+        if ($quantity <= 0) {
+            $this->remove($position);
+            return;
+        }
+
 		if (isset($this->_positions[$position->getId()])) {
 			$this->_positions[$position->getId()]->setQuantity($quantity);
 		} else {
@@ -72,10 +84,14 @@ class ShoppingCart extends Component
 		$this->trigger(self::EVENT_POSITION_UPDATE, new Event([
 			'data' => $this->_positions[$position->getId()],
 		]));
+        $this->trigger(self::EVENT_CART_CHANGE, new Event([
+            'data' => ['action' => 'update', 'position' => $this->_positions[$position->getId()]],
+        ]));
 		$this->saveToSession();
 	}
 
 	/**
+     * Removes position from the cart
 	 * @param CartPositionInterface $position
 	 */
 	public function remove($position)
@@ -83,17 +99,27 @@ class ShoppingCart extends Component
 		$this->trigger(self::EVENT_BEFORE_POSITION_REMOVE, new Event([
 			'data' => $this->_positions[$position->getId()],
 		]));
+        $this->trigger(self::EVENT_CART_CHANGE, new Event([
+            'data' => ['action' => 'remove', 'position' => $this->_positions[$position->getId()]],
+        ]));
 		unset($this->_positions[$position->getId()]);
 		$this->saveToSession();
 	}
 
-	public function removeAll()
+    /**
+     * Remove all positions
+     */
+    public function removeAll()
 	{
 		$this->_positions = [];
+        $this->trigger(self::EVENT_CART_CHANGE, new Event([
+            'data' => ['action' => 'removeAll'],
+        ]));
 		$this->saveToSession();
 	}
 
 	/**
+     * Returns position by it's id
 	 * @param string $id
 	 * @return CartPositionInterface
 	 */
@@ -116,10 +142,14 @@ class ShoppingCart extends Component
     public function setPositions($positions)
     {
         $this->_positions = $positions;
+        $this->trigger(self::EVENT_CART_CHANGE, new Event([
+            'data' => ['action' => 'positions'],
+        ]));
         $this->saveToSession();
     }
 
 	/**
+     * Returns true if cart is empty
 	 * @return bool
 	 */
 	public function getIsEmpty()
@@ -139,6 +169,7 @@ class ShoppingCart extends Component
 	}
 
 	/**
+     * Return full cart cost as a sum of the individual positions costs
 	 * @return int
 	 */
 	public function getCost()
@@ -150,8 +181,9 @@ class ShoppingCart extends Component
 	}
 
 	/**
-	 * Returns hash (md5) of the current cart, that is uniq to the current combination
-	 * of positions, quantities and costs
+	 * Returns hash (md5) of the current cart, that is unique to the current combination
+	 * of positions, quantities and costs. This helps us fast compare if two carts are the same, or not, also
+     * we can detect if cart is changed (comparing hash to the one's saved somewhere)
 	 * @return string
 	 */
 	public function getHash()
