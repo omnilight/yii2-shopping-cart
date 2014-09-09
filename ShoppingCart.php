@@ -119,13 +119,26 @@ class ShoppingCart extends Component
     }
 
     /**
-     * Returns position by it's id
+     * Returns position by it's id. Null is returned if position was not found
      * @param string $id
-     * @return CartPositionInterface
+     * @return CartPositionInterface|null
      */
     public function getPositionById($id)
     {
-        return $this->_positions[$id];
+        if ($this->hasPosition($id))
+            return $this->_positions[$id];
+        else
+            return null;
+    }
+
+    /**
+     * Checks whether cart position exists or not
+     * @param string $id
+     * @return bool
+     */
+    public function hasPosition($id)
+    {
+        return isset($this->_positions[$id]);
     }
 
     /**
