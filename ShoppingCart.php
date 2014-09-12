@@ -42,7 +42,6 @@ class ShoppingCart extends Component
      */
     protected $_positions = [];
 
-
     public function init()
     {
         $this->loadFromSession();
