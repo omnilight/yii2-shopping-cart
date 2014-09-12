@@ -2,6 +2,7 @@
 
 namespace yz\shoppingcart;
 
+use Yii;
 use yii\base\Component;
 use yii\base\Event;
 
@@ -33,9 +34,14 @@ class ShoppingCart extends Component
      */
     public $cartId = __CLASS__;
     /**
+     * @var array
+     */
+    public $discounts = [];
+    /**
      * @var CartPositionInterface[]
      */
     protected $_positions = [];
+
 
     public function init()
     {
@@ -55,6 +61,7 @@ class ShoppingCart extends Component
             $position->setQuantity($quantity);
             $this->_positions[$position->getId()] = $position;
         }
+        $this->applyDiscounts();
         $this->trigger(self::EVENT_POSITION_PUT, new Event([
             'data' => $this->_positions[$position->getId()],
         ]));
@@ -81,6 +88,7 @@ class ShoppingCart extends Component
             $position->setQuantity($quantity);
             $this->_positions[$position->getId()] = $position;
         }
+        $this->applyDiscounts();
         $this->trigger(self::EVENT_POSITION_UPDATE, new Event([
             'data' => $this->_positions[$position->getId()],
         ]));
@@ -103,6 +111,7 @@ class ShoppingCart extends Component
             'data' => ['action' => 'remove', 'position' => $this->_positions[$position->getId()]],
         ]));
         unset($this->_positions[$position->getId()]);
+        $this->applyDiscounts();
         $this->saveToSession();
     }
 
@@ -183,13 +192,14 @@ class ShoppingCart extends Component
 
     /**
      * Return full cart cost as a sum of the individual positions costs
+     * @param $withDiscount
      * @return int
      */
-    public function getCost()
+    public function getCost($withDiscount = false)
     {
         $cost = 0;
         foreach ($this->_positions as $position)
-            $cost += $position->getCost();
+            $cost += $position->getCost($withDiscount);
         return $cost;
     }
 
@@ -210,12 +220,29 @@ class ShoppingCart extends Component
 
     protected function saveToSession()
     {
-        \Yii::$app->session[$this->cartId] = serialize($this->_positions);
+        Yii::$app->session[$this->cartId] = serialize($this->_positions);
     }
 
     protected function loadFromSession()
     {
-        if (isset(\Yii::$app->session[$this->cartId]))
-            $this->_positions = unserialize(\Yii::$app->session[$this->cartId]);
+        if (isset(Yii::$app->session[$this->cartId]))
+            $this->_positions = unserialize(Yii::$app->session[$this->cartId]);
+    }
+
+    /**
+     * Apply discounts to all positions
+     * @param $save
+     * @return void
+     */
+    public function applyDiscounts($save = false)
+    {
+        foreach ($this->discounts as $discount) {
+            $discountObj = Yii::createObject($discount);
+            $discountObj->setShoppingCart($this);
+            $discountObj->apply();
+        }
+
+        if ($save)
+            $this->saveToSession();
     }
 }
