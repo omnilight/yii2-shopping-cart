@@ -43,7 +43,9 @@ trait CartPositionTrait
     {
         /** @var Model|CartPositionInterface|self $this */
         $cost = $this->getQuantity() * $this->getPrice();
-        $costEvent = new CostCalculationEvent();
+        $costEvent = new CostCalculationEvent([
+            'baseCost' => $cost,
+        ]);
         $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
             $cost -= $costEvent->discountValue;

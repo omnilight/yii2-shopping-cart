@@ -199,7 +199,9 @@ class ShoppingCart extends Component
         foreach ($this->_positions as $position) {
             $cost += $position->getCost($withDiscount);
         }
-        $costEvent = new CostCalculationEvent();
+        $costEvent = new CostCalculationEvent([
+            'baseCost' => $cost,
+        ]);
         $this->trigger(self::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
             $cost -= $costEvent->discountValue;
