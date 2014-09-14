@@ -4,6 +4,7 @@ namespace yz\shoppingcart;
 
 use yii\base\Component;
 use yii\base\Event;
+use Yii;
 
 
 /**
@@ -26,12 +27,18 @@ class ShoppingCart extends Component
     const EVENT_BEFORE_POSITION_REMOVE = 'removePosition';
     /** Triggered on any cart change: add, update, delete position */
     const EVENT_CART_CHANGE = 'cartChange';
+    /** Triggered on after cart cost calculation */
+    const EVENT_COST_CALCULATION = 'costCalculation';
 
     /**
      * Shopping cart ID to support multiple carts
      * @var string
      */
     public $cartId = __CLASS__;
+    /**
+     * @var array
+     */
+    public $discounts = [];
     /**
      * @var CartPositionInterface[]
      */
@@ -183,13 +190,19 @@ class ShoppingCart extends Component
 
     /**
      * Return full cart cost as a sum of the individual positions costs
+     * @param $withDiscount
      * @return int
      */
-    public function getCost()
+    public function getCost($withDiscount = false)
     {
         $cost = 0;
-        foreach ($this->_positions as $position)
-            $cost += $position->getCost();
+        foreach ($this->_positions as $position) {
+            $cost += $position->getCost($withDiscount);
+        }
+        $costEvent = new CostCalculationEvent();
+        $this->trigger(self::EVENT_COST_CALCULATION, $costEvent);
+        if ($withDiscount)
+            $cost -= $costEvent->discountValue;
         return $cost;
     }
 
@@ -210,12 +223,12 @@ class ShoppingCart extends Component
 
     protected function saveToSession()
     {
-        \Yii::$app->session[$this->cartId] = serialize($this->_positions);
+        Yii::$app->session[$this->cartId] = serialize($this->_positions);
     }
 
     protected function loadFromSession()
     {
-        if (isset(\Yii::$app->session[$this->cartId]))
-            $this->_positions = unserialize(\Yii::$app->session[$this->cartId]);
+        if (isset(Yii::$app->session[$this->cartId]))
+            $this->_positions = unserialize(Yii::$app->session[$this->cartId]);
     }
 }

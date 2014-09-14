@@ -19,15 +19,19 @@ namespace yz\shoppingcart;
  */
 interface CartPositionInterface
 {
+    /** Triggered on cost calculation */
+    const EVENT_COST_CALCULATION = 'costCalculation';
+
     /**
      * @return integer
      */
     public function getPrice();
 
     /**
+     * @param bool $withDiscount
      * @return integer
      */
-    public function getCost();
+    public function getCost($withDiscount = true);
 
     /**
      * @return string

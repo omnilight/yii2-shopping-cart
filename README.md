@@ -150,3 +150,49 @@ class ProductCartPosition extends Object implements CartPositionInterface
     //...
 }
 ```
+
+Using discounts
+---------------
+
+Discounts are implemented as behaviors that could attached to the cart or it's positions. To use them, follow this steps:
+
+1. Define discount class as a subclass of yz\shoppingcart\DiscountBehavior
+```php
+// app/components/MyDiscount.php
+
+class MyDiscount extends DiscountBehavior
+{
+    /**
+     * @param CostCalculationEvent $event
+     */
+    public function onCostCalculation($event)
+    {
+        // Some discount logic, for example
+        $event->discountValue = 100;
+    }
+}
+```
+
+2. Add this behavior to the cart:
+
+```php
+$cart->attachBehavior('myDiscount', ['class' => 'app\components\MyDiscount']);
+```
+
+If discount is suitable not for the whole cart, but for the individual positions, than it is possible to attach
+discount to the cart position itself:
+
+```
+$cart->getPositionById($positionId)->attachBehavior('myDiscount', ['class' => 'app\components\MyDiscount']);
+```
+
+Note, that the same behavior could be used for both cart and position classes.
+
+Internally cart and position trigger `ShoppingCart::EVENT_COST_CALCULATION` and `CartPositionInterface::EVENT_COST_CALCULATION`
+events, so you can also subscribe on this events to perform discount calculation:
+
+```php
+$cart->on(ShoppingCart::EVENT_COST_CALCULATION, function ($event) {
+    $event->discountValue = 100;
+});
+```

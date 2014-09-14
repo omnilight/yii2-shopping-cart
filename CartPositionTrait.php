@@ -1,12 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 19.01.14
- * Time: 13:21
- */
 
 namespace yz\shoppingcart;
+
+use yii\base\Model;
 
 /**
  * Trait CartPositionTrait
@@ -17,6 +13,16 @@ namespace yz\shoppingcart;
 trait CartPositionTrait
 {
     protected $_quantity;
+
+    /**
+     * Set position discount sum
+     * @param float $price
+     * @return void
+     */
+    public function setDiscountPrice($price)
+    {
+        $this->discountPrice = $price;
+    }
 
     public function getQuantity()
     {
@@ -30,11 +36,17 @@ trait CartPositionTrait
 
     /**
      * Default implementation for getCost function. Cost is calculated as price * quantity
+     * @param bool $withDiscount
      * @return int
      */
-    public function getCost()
+    public function getCost($withDiscount = true)
     {
-        /** @var CartPositionInterface $this */
-        return $this->getQuantity() * $this->getPrice();
+        /** @var Model|CartPositionInterface|self $this */
+        $cost = $this->getQuantity() * $this->getPrice();
+        $costEvent = new CostCalculationEvent();
+        $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
+        if ($withDiscount)
+            $cost -= $costEvent->discountValue;
+        return $cost;
     }
 } 
