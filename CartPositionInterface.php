@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 18.01.14
- * Time: 22:25
- */
 
 namespace yz\shoppingcart;
 
