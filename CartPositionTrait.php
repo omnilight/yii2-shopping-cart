@@ -2,6 +2,8 @@
 
 namespace yz\shoppingcart;
 
+use yii\base\Model;
+
 /**
  * Trait CartPositionTrait
  * @property int $quantity Returns quantity of cart position
@@ -10,19 +12,7 @@ namespace yz\shoppingcart;
  */
 trait CartPositionTrait
 {
-    /**
-     * Update model on session restore?
-     * @var boolean
-     */
-    private $refresh = true;
-
     protected $_quantity;
-
-    /**
-     * Position discount sum
-     * @var float
-     */
-    private $discountPrice = 0.0;
 
     /**
      * Set position discount sum
@@ -32,15 +22,6 @@ trait CartPositionTrait
     public function setDiscountPrice($price)
     {
         $this->discountPrice = $price;
-    }
-
-    /**
-     * Get position discount sum
-     * @return float
-     */
-    public function getDiscountPrice()
-    {
-        return $this->discountPrice;
     }
 
     public function getQuantity()
@@ -60,18 +41,12 @@ trait CartPositionTrait
      */
     public function getCost($withDiscount = true)
     {
-        $fullSum = $this->getQuantity() * $this->getPrice();
+        /** @var Model|CartPositionInterface|self $this */
+        $cost = $this->getQuantity() * $this->getPrice();
+        $costEvent = new CostCalculationEvent();
+        $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
-            $fullSum -= $this->discountPrice;
-        return $fullSum;
-    }
-
-    /**
-     * Magic method. Called on session restore.
-     */
-    public function __wakeup()
-    {
-        if ($this->refresh === true)
-            $this->refresh();
+            $cost -= $costEvent->discountValue;
+        return $cost;
     }
 } 
