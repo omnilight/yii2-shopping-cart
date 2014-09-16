@@ -14,16 +14,6 @@ trait CartPositionTrait
 {
     protected $_quantity;
 
-    /**
-     * Set position discount sum
-     * @param float $price
-     * @return void
-     */
-    public function setDiscountPrice($price)
-    {
-        $this->discountPrice = $price;
-    }
-
     public function getQuantity()
     {
         return $this->_quantity;
