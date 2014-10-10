@@ -11,7 +11,8 @@ namespace yz\shoppingcart;
 interface CartPositionProviderInterface
 {
     /**
+     * @param array $params Parameters for cart position
      * @return CartPositionInterface
      */
-    public function getCartPosition();
+    public function getCartPosition($params = []);
 } 
