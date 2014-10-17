@@ -204,7 +204,7 @@ class ShoppingCart extends Component
         ]);
         $this->trigger(self::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
-            $cost -= $costEvent->discountValue;
+            $cost = max(0, $cost - $costEvent->discountValue);
         return $cost;
     }
 

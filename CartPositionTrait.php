@@ -38,7 +38,7 @@ trait CartPositionTrait
         ]);
         $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
-            $cost -= $costEvent->discountValue;
+            $cost = max(0, $cost - $costEvent->discountValue);
         return $cost;
     }
 } 
