@@ -2,7 +2,8 @@
 
 namespace yz\shoppingcart;
 
-use yii\base\Model;
+use yii\base\Component;
+use yii\base\Object;
 
 /**
  * Trait CartPositionTrait
@@ -31,12 +32,13 @@ trait CartPositionTrait
      */
     public function getCost($withDiscount = true)
     {
-        /** @var Model|CartPositionInterface|self $this */
+        /** @var Component|CartPositionInterface|self $this */
         $cost = $this->getQuantity() * $this->getPrice();
         $costEvent = new CostCalculationEvent([
             'baseCost' => $cost,
         ]);
-        $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
+        if ($this instanceof Component)
+            $this->trigger(CartPositionInterface::EVENT_COST_CALCULATION, $costEvent);
         if ($withDiscount)
             $cost = max(0, $cost - $costEvent->discountValue);
         return $cost;
