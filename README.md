@@ -77,7 +77,7 @@ And use it in the following way:
 \Yii::$app->cart->put($cartPosition, 1);
 ```
 
-If your original model that you want to use as cart position is too heavy to be stored in the session, you
+If the original model that you want to use as cart position is too heavy to be stored in the session, you
 can create a separate class implementing CartPositionInterface, and original model can implement
 CartPositionProviderInterface:
 
