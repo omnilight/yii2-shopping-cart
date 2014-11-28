@@ -77,6 +77,18 @@ And use it in the following way:
 \Yii::$app->cart->put($cartPosition, 1);
 ```
 
+In order to get number of items in the cart:
+
+```php
+$itemsCount = \Yii::$app->cart->getCount();
+```
+
+In order to get total cost of items in the cart:
+
+```php
+$total = \Yii::$app->cart->getCost();
+```
+
 If the original model that you want to use as cart position is too heavy to be stored in the session, you
 can create a separate class implementing CartPositionInterface, and original model can implement
 CartPositionProviderInterface:
@@ -188,8 +200,17 @@ $cart->getPositionById($positionId)->attachBehavior('myDiscount', ['class' => 'a
 
 Note, that the same behavior could be used for both cart and position classes.
 
-Internally cart and position trigger `ShoppingCart::EVENT_COST_CALCULATION` and `CartPositionInterface::EVENT_COST_CALCULATION`
-events, so you can also subscribe on this events to perform discount calculation:
+3. To get total cost with discould applied:
+
+```php
+$total = \Yii::$app->cart->getCost(true);
+```
+
+4. During the calculation the following events are triggered: 
+- `ShoppingCart::EVENT_COST_CALCULATION` once per calculation.
+- `CartPositionInterface::EVENT_COST_CALCULATION` for each position in the cart.
+ 
+You can also subscribe on this events to perform discount calculation:
 
 ```php
 $cart->on(ShoppingCart::EVENT_COST_CALCULATION, function ($event) {
