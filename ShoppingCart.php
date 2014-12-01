@@ -36,10 +36,6 @@ class ShoppingCart extends Component
      */
     public $cartId = __CLASS__;
     /**
-     * @var array
-     */
-    public $discounts = [];
-    /**
      * @var CartPositionInterface[]
      */
     protected $_positions = [];
