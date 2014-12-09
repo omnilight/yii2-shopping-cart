@@ -5,6 +5,8 @@ namespace yz\shoppingcart;
 use Yii;
 use yii\base\Component;
 use yii\base\Event;
+use yii\di\Instance;
+use yii\web\Session;
 
 
 /**
@@ -38,6 +40,11 @@ class ShoppingCart extends Component
      */
     public $storeInSession = true;
     /**
+     * Session component
+     * @var string|Session
+     */
+    public $session = 'session';
+    /**
      * Shopping cart ID to support multiple carts
      * @var string
      */
@@ -58,8 +65,9 @@ class ShoppingCart extends Component
      */
     public function loadFromSession()
     {
-        if (isset(Yii::$app->session[$this->cartId]))
-            $this->setSerialized(Yii::$app->session[$this->cartId]);
+        $this->session = Instance::ensure($this->session, Session::className());
+        if (isset($this->session[$this->cartId]))
+            $this->setSerialized($this->session[$this->cartId]);
     }
 
     /**
@@ -67,7 +75,8 @@ class ShoppingCart extends Component
      */
     public function saveToSession()
     {
-        Yii::$app->session[$this->cartId] = $this->getSerialized();
+        $this->session = Instance::ensure($this->session, Session::className());
+        $this->session[$this->cartId] = $this->getSerialized();
     }
 
     /**
