@@ -32,6 +32,12 @@ class ShoppingCart extends Component
     const EVENT_COST_CALCULATION = 'costCalculation';
 
     /**
+     * If true (default) cart will be automatically stored in and loaded from session.
+     * If false - you should do this manually with saveToSession and loadFromSession methods
+     * @var bool
+     */
+    public $storeInSession = true;
+    /**
      * Shopping cart ID to support multiple carts
      * @var string
      */
@@ -43,7 +49,8 @@ class ShoppingCart extends Component
 
     public function init()
     {
-        $this->loadFromSession();
+        if ($this->storeInSession)
+            $this->loadFromSession();
     }
 
     /**
@@ -65,6 +72,7 @@ class ShoppingCart extends Component
         $this->trigger(self::EVENT_CART_CHANGE, new Event([
             'data' => ['action' => 'put', 'position' => $this->_positions[$position->getId()]],
         ]));
+        if ($this->storeInSession)
         $this->saveToSession();
     }
 
@@ -91,6 +99,7 @@ class ShoppingCart extends Component
         $this->trigger(self::EVENT_CART_CHANGE, new Event([
             'data' => ['action' => 'update', 'position' => $this->_positions[$position->getId()]],
         ]));
+        if ($this->storeInSession)
         $this->saveToSession();
     }
 
@@ -107,6 +116,7 @@ class ShoppingCart extends Component
             'data' => ['action' => 'remove', 'position' => $this->_positions[$position->getId()]],
         ]));
         unset($this->_positions[$position->getId()]);
+        if ($this->storeInSession)
         $this->saveToSession();
     }
 
@@ -119,6 +129,7 @@ class ShoppingCart extends Component
         $this->trigger(self::EVENT_CART_CHANGE, new Event([
             'data' => ['action' => 'removeAll'],
         ]));
+        if ($this->storeInSession)
         $this->saveToSession();
     }
 
@@ -162,6 +173,7 @@ class ShoppingCart extends Component
         $this->trigger(self::EVENT_CART_CHANGE, new Event([
             'data' => ['action' => 'positions'],
         ]));
+        if ($this->storeInSession)
         $this->saveToSession();
     }
 
@@ -238,12 +250,12 @@ class ShoppingCart extends Component
         $this->_positions = unserialize($serialized);
     }
 
-    protected function saveToSession()
+    public function saveToSession()
     {
         Yii::$app->session[$this->cartId] = $this->getSerialized();
     }
 
-    protected function loadFromSession()
+    public function loadFromSession()
     {
         if (isset(Yii::$app->session[$this->cartId]))
             $this->setSerialized(Yii::$app->session[$this->cartId]);
