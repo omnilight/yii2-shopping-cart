@@ -15,6 +15,7 @@ use Yii;
  * @property bool $isEmpty Returns true if cart is empty
  * @property string $hash Returns hash (md5) of the current cart, that is uniq to the current combination
  * of positions, quantities and costs
+ * @property string $serialized Get/set serialized content of the cart
  * @package \yz\shoppingcart
  */
 class ShoppingCart extends Component
@@ -223,14 +224,34 @@ class ShoppingCart extends Component
         return md5(serialize($data));
     }
 
+    /**
+     * Returns cart positions as serialized items
+     * @return string
+     */
+    public function getSerialized()
+    {
+        return serialize($this->_positions);
+    }
+
+    /**
+     * Sets cart from serialized string
+     * @param string $serialized
+     */
+    public function setSerialized($serialized)
+    {
+        $this->_positions = unserialize($serialized);
+    }
+
     protected function saveToSession()
     {
-        Yii::$app->session[$this->cartId] = serialize($this->_positions);
+        Yii::$app->session[$this->cartId] = $this->getSerialized();
     }
 
     protected function loadFromSession()
     {
         if (isset(Yii::$app->session[$this->cartId]))
-            $this->_positions = unserialize(Yii::$app->session[$this->cartId]);
+            $this->setSerialized(Yii::$app->session[$this->cartId]);
     }
+
+
 }
