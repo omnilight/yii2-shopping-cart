@@ -2,9 +2,9 @@
 
 namespace yz\shoppingcart;
 
+use Yii;
 use yii\base\Component;
 use yii\base\Event;
-use Yii;
 
 
 /**
@@ -54,6 +54,32 @@ class ShoppingCart extends Component
     }
 
     /**
+     * Loads cart from session
+     */
+    public function loadFromSession()
+    {
+        if (isset(Yii::$app->session[$this->cartId]))
+            $this->setSerialized(Yii::$app->session[$this->cartId]);
+    }
+
+    /**
+     * Saves cart to the session
+     */
+    public function saveToSession()
+    {
+        Yii::$app->session[$this->cartId] = $this->getSerialized();
+    }
+
+    /**
+     * Sets cart from serialized string
+     * @param string $serialized
+     */
+    public function setSerialized($serialized)
+    {
+        $this->_positions = unserialize($serialized);
+    }
+
+    /**
      * @param CartPositionInterface $position
      * @param int $quantity
      */
@@ -73,7 +99,16 @@ class ShoppingCart extends Component
             'data' => ['action' => 'put', 'position' => $this->_positions[$position->getId()]],
         ]));
         if ($this->storeInSession)
-        $this->saveToSession();
+            $this->saveToSession();
+    }
+
+    /**
+     * Returns cart positions as serialized items
+     * @return string
+     */
+    public function getSerialized()
+    {
+        return serialize($this->_positions);
     }
 
     /**
@@ -100,7 +135,7 @@ class ShoppingCart extends Component
             'data' => ['action' => 'update', 'position' => $this->_positions[$position->getId()]],
         ]));
         if ($this->storeInSession)
-        $this->saveToSession();
+            $this->saveToSession();
     }
 
     /**
@@ -117,7 +152,7 @@ class ShoppingCart extends Component
         ]));
         unset($this->_positions[$position->getId()]);
         if ($this->storeInSession)
-        $this->saveToSession();
+            $this->saveToSession();
     }
 
     /**
@@ -130,7 +165,7 @@ class ShoppingCart extends Component
             'data' => ['action' => 'removeAll'],
         ]));
         if ($this->storeInSession)
-        $this->saveToSession();
+            $this->saveToSession();
     }
 
     /**
@@ -174,7 +209,7 @@ class ShoppingCart extends Component
             'data' => ['action' => 'positions'],
         ]));
         if ($this->storeInSession)
-        $this->saveToSession();
+            $this->saveToSession();
     }
 
     /**
@@ -230,35 +265,6 @@ class ShoppingCart extends Component
             $data[] = [$position->getId(), $position->getQuantity(), $position->getPrice()];
         }
         return md5(serialize($data));
-    }
-
-    /**
-     * Returns cart positions as serialized items
-     * @return string
-     */
-    public function getSerialized()
-    {
-        return serialize($this->_positions);
-    }
-
-    /**
-     * Sets cart from serialized string
-     * @param string $serialized
-     */
-    public function setSerialized($serialized)
-    {
-        $this->_positions = unserialize($serialized);
-    }
-
-    public function saveToSession()
-    {
-        Yii::$app->session[$this->cartId] = $this->getSerialized();
-    }
-
-    public function loadFromSession()
-    {
-        if (isset(Yii::$app->session[$this->cartId]))
-            $this->setSerialized(Yii::$app->session[$this->cartId]);
     }
 
 
