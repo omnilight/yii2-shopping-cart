@@ -153,13 +153,22 @@ class ShoppingCart extends Component
      */
     public function remove($position)
     {
+        $this->removeById($position->id);
+    }
+
+    /**
+     * Removes position from the cart by ID
+     * @param string $id
+     */
+    public function removeById($id)
+    {
         $this->trigger(self::EVENT_BEFORE_POSITION_REMOVE, new Event([
-            'data' => $this->_positions[$position->getId()],
+            'data' => $this->_positions[$id],
         ]));
         $this->trigger(self::EVENT_CART_CHANGE, new Event([
-            'data' => ['action' => 'remove', 'position' => $this->_positions[$position->getId()]],
+            'data' => ['action' => 'remove', 'position' => $this->_positions[$id]],
         ]));
-        unset($this->_positions[$position->getId()]);
+        unset($this->_positions[$id]);
         if ($this->storeInSession)
             $this->saveToSession();
     }
