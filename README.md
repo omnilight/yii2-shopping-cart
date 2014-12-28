@@ -103,7 +103,7 @@ class Product extends ActiveRecord implements CartPositionProviderInterface
         return \Yii::createObject([
             'class' => 'app\models\ProductCartPosition',
             'id' => $this->id,
-        ];
+        ]);
     }
 }
 
