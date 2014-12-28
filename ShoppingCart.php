@@ -54,8 +54,9 @@ class ShoppingCart extends Component
      */
     protected $_positions = [];
 
-    public function __construct($cartId=__CLASS__, $storeInSession = true)
+    public function __construct($cartId = __CLASS__, $storeInSession = true, $config = [])
     {
+        parent::__construct($config);
         $this->cartId = $cartId;
         $this->storeInSession = $storeInSession;
     }
