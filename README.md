@@ -200,7 +200,7 @@ $cart->getPositionById($positionId)->attachBehavior('myDiscount', ['class' => 'a
 
 Note, that the same behavior could be used for both cart and position classes.
 
-3. To get total cost with discould applied:
+3. To get total cost with discount applied:
 
 ```php
 $total = \Yii::$app->cart->getCost(true);
