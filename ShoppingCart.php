@@ -157,7 +157,7 @@ class ShoppingCart extends Component
      */
     public function remove($position)
     {
-        $this->removeById($position->id);
+        $this->removeById($position->getId());
     }
 
     /**
