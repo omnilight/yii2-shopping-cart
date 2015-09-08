@@ -228,7 +228,9 @@ class ShoppingCart extends Component
      */
     public function setPositions($positions)
     {
-        $this->_positions = $positions;
+        $this->_positions = array_filter($positions, function (CartPositionInterface $position) {
+            return $position->quantity > 0;
+        });
         $this->trigger(self::EVENT_CART_CHANGE, new CartActionEvent([
             'action' => CartActionEvent::ACTION_SET_POSITIONS,
         ]));
