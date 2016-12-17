@@ -48,11 +48,18 @@ class ShoppingCart extends Component
      * Shopping cart ID to support multiple carts
      * @var string
      */
-    public $cartId = __CLASS__;
+    public $cartId;
     /**
      * @var CartPositionInterface[]
      */
     protected $_positions = [];
+
+    public function __construct($cartId = __CLASS__, $storeInSession = true, $config = [])
+    {
+        parent::__construct($config);
+        $this->cartId = $cartId;
+        $this->storeInSession = $storeInSession;
+    }
 
     public function init()
     {
