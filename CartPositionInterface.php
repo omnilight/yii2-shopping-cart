@@ -15,6 +15,8 @@ interface CartPositionInterface
 {
     /** Triggered on cost calculation */
     const EVENT_COST_CALCULATION = 'costCalculation';
+    /** Triggered on after cart shipping calculation */
+    const EVENT_SHIPPING_COST_CALCULATION = 'shippingCostcalculation';
 
     /**
      * @return integer
@@ -40,5 +42,5 @@ interface CartPositionInterface
     /**
      * @return int
      */
-    public function getQuantity();
+    public function getQuantity();  
 } 
