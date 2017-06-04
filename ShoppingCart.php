@@ -287,8 +287,6 @@ class ShoppingCart extends Component
      */
     public function getShippingCost($withDiscount = false)
     {
-        $cost = $this->getCost($withDiscount);
-
         $shippingCostEvent = new ShippingCostCalculationEvent([]);
         $this->trigger(self::EVENT_SHIPPING_COST_CALCULATION, $shippingCostEvent);
         $cost = $shippingCostEvent->shippingValue;
