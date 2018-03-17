@@ -66,8 +66,10 @@ class ShoppingCart extends Component
     public function loadFromSession()
     {
         $this->session = Instance::ensure($this->session, Session::className());
-        if (isset($this->session[$this->cartId]))
-            $this->setSerialized($this->session[$this->cartId]);
+        $saved = unserialize($this->session[$this->cartId]);
+        if(is_object($saved))
+            foreach(get_object_vars($saved) as $var => $value)
+                $this->$var = $value;
     }
 
     /**
@@ -76,7 +78,7 @@ class ShoppingCart extends Component
     public function saveToSession()
     {
         $this->session = Instance::ensure($this->session, Session::className());
-        $this->session[$this->cartId] = $this->getSerialized();
+        $this->session[$this->cartId] = serialize(clone $this);
     }
 
     /**
