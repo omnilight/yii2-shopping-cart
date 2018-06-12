@@ -47,7 +47,7 @@ In your controller:
 ```php
 public function actionAddToCart($id)
 {
-    $cart = new ShoppingCart();
+    $cart = Yii::$app->cart;
 
     $model = Product::findOne($id);
     if ($model) {
