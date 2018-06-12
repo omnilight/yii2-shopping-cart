@@ -3,7 +3,6 @@
 namespace yz\shoppingcart;
 
 use yii\base\Component;
-use yii\base\Object;
 
 /**
  * Trait CartPositionTrait
