@@ -32,6 +32,8 @@ class ShoppingCart extends Component
     const EVENT_CART_CHANGE = 'cartChange';
     /** Triggered on after cart cost calculation */
     const EVENT_COST_CALCULATION = 'costCalculation';
+    /** Triggered on after cart shipping calculation */
+    const EVENT_SHIPPING_COST_CALCULATION = 'shippingCostcalculation';
 
     /**
      * If true (default) cart will be automatically stored in and loaded from session.
@@ -276,6 +278,32 @@ class ShoppingCart extends Component
         if ($withDiscount)
             $cost = max(0, $cost - $costEvent->discountValue);
         return $cost;
+    }
+
+    /**
+     * Return full cart shipping cost
+     * @param $withDiscount
+     * @return int
+     */
+    public function getShippingCost($withDiscount = false)
+    {
+        $shippingCostEvent = new ShippingCostCalculationEvent([]);
+        $this->trigger(self::EVENT_SHIPPING_COST_CALCULATION, $shippingCostEvent);
+        $cost = $shippingCostEvent->shippingValue;
+        return $cost;
+    }
+
+    /**
+     * Return full cart total cost
+     * @param $withDiscount
+     * @return int
+     */
+    public function getTotal($withDiscount = false)
+    {
+        $cost = $this->getCost($withDiscount);
+        $shipping = $this->getShippingCost($withDiscount);
+
+        return $cost + $shipping;
     }
 
     /**

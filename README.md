@@ -217,3 +217,63 @@ $cart->on(ShoppingCart::EVENT_COST_CALCULATION, function ($event) {
     $event->discountValue = 100;
 });
 ```
+
+5. During the calculation the following events are triggered: 
+- `ShoppingCart::EVENT_COST_CALCULATION` once per calculation.
+- `CartPositionInterface::EVENT_COST_CALCULATION` for each position in the cart.
+ 
+You can also subscribe on this events to perform discount calculation:
+
+```php
+$cart->on(ShoppingCart::EVENT_COST_CALCULATION, function ($event) {
+    $event->discountValue = 100;
+});
+```
+
+
+Using shipping cost
+---------------
+
+Shipping costs are implemented as behaviors that could attached to the cart or it's positions. To use them, follow this steps:
+
+1. Define discount class as a subclass of yz\shoppingcart\ShippingCostBehavior
+
+```php
+// app/components/FixedShippingCost.php
+
+class FixedShippingCost extends ShippingCostBehavior
+{
+    public $freeSince = 0;
+    public $ammount = 0;
+
+    /**
+     * @param ShippingCostCalculationEvent $event
+     */
+    public function onShippingCostCalculation($event)
+    {
+        if($this->owner->getCost() < $this->freeSince)
+            $event->shippingValue = $this->ammount;
+        else
+            $event->shippingValue = 0;
+    }
+}
+```
+
+2. Add this behavior to the cart:
+
+```php
+$cart->attachBehavior('fixedShippingCost', ['class' => 'app\components\FixedShippingCost', 'ammount' => 10, 'freeSince' => 999]);
+```
+
+3. To get shipping cost with discount applied:
+
+```php
+$cost = \Yii::$app->cart->getShippingCost(true);
+```
+
+4. To get cart total:
+
+```php
+$total = \Yii::$app->cart->getTotal(true);
+```
+
